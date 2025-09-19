@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ExpenseItem from '../components/ExpenseItem';
 import ExpenseAdd from '../components/ExpenseAdd';
+import ExpenseSorter, { type SortOption } from '../components/ExpenseSorter';
+import { sortExpenses } from '../utils/sortUtils';
 import type { Expense } from '../types/Expense';
 
 const API_BASE_URL = 'http://localhost:3000/api';
@@ -9,6 +11,8 @@ const Home: React.FC = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [sortOption, setSortOption] = useState<SortOption>('date-newest');
 
   // Fetch expenses from backend on component mount
   useEffect(() => {
@@ -94,16 +98,27 @@ const Home: React.FC = () => {
     }
   };
 
+  // Sort expenses based on current sort option
+  const sortedExpenses = sortExpenses(expenses, sortOption);
+
+  const handleSortChange = (newSortOption: SortOption) => {
+    setSortOption(newSortOption);
+  };
+
   return (
     <div className="home-page">
       <h1>Expense Tracker</h1>
       {error && <div className={error.includes('successfully') ? 'success-message' : 'error-message'}>{error}</div>}
+      {successMessage && <div className="success-message">{successMessage}</div>}
       <div className="controls-section">
         <ExpenseAdd handleAdd={handleAdd} />
         <button onClick={handleReset} className="reset-button" disabled={loading}>
           {loading ? 'Resetting...' : 'Reset Data'}
         </button>
       </div>
+      {!loading && expenses.length > 0 && (
+        <ExpenseSorter currentSort={sortOption} onSortChange={handleSortChange} />
+      )}
       {loading ? (
         <div className="loading">Loading expenses...</div>
       ) : (
@@ -111,7 +126,7 @@ const Home: React.FC = () => {
           {expenses.length === 0 ? (
             <div className="no-expenses">No expenses found. Add your first expense!</div>
           ) : (
-            expenses.map((expense) => (
+            sortedExpenses.map((expense) => (
               <ExpenseItem key={expense.id} expense={expense} />
             ))
           )}
