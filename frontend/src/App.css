@@ -1,100 +1,169 @@
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 50%, #1abc9c 100%);
+  min-height: 100vh;
+  color: #333;
+}
+
 #root {
-  max-width: 1280px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: left;
+  min-height: 100vh;
 }
 
 /* Expense Tracker Styles */
 .home-page {
-  max-width: 800px;
-  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  margin: 2rem auto;
+  max-width: 100%;
 }
 
 .home-page h1 {
   text-align: center;
-  color: #333;
-  margin-bottom: 2rem;
+  color: #2c3e50;
+  margin-bottom: 2.5rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #3498db 0%, #1abc9c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .expense-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .expense-item {
   display: flex;
   align-items: center;
-  padding: 1.5rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s ease;
+  padding: 2rem;
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+.expense-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #3498db 0%, #1abc9c 100%);
 }
 
 .expense-item:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(52, 152, 219, 0.2);
+  border-color: rgba(52, 152, 219, 0.3);
 }
 
 .expense-date {
-  font-size: 0.9rem;
-  color: #666;
-  min-width: 100px;
-  font-weight: 500;
+  font-size: 0.95rem;
+  color: #667eea;
+  min-width: 120px;
+  font-weight: 600;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  text-align: center;
 }
 
 .expense-details {
   flex: 1;
-  margin-left: 1rem;
+  margin-left: 2rem;
 }
 
 .expense-description {
   margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
-  color: #333;
+  font-size: 1.2rem;
+  color: #2c3e50;
+  font-weight: 600;
 }
 
 .expense-payer {
   margin: 0;
-  font-size: 0.9rem;
-  color: #666;
+  font-size: 1rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.expense-payer::before {
+  content: '👤 ';
+  margin-right: 0.25rem;
 }
 
 .expense-amount {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #e74c3c;
-  min-width: 80px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #e67e22;
+  min-width: 100px;
   text-align: right;
+  background: rgba(230, 126, 34, 0.1);
+  padding: 0.75rem 1.25rem;
+  border-radius: 15px;
 }
 
-/* ExpenseAdd Component Styles */
-.expense-add {
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
-}
-
-.add-button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 5px;
+.expense-amount::before {
   font-size: 1rem;
-  font-weight: 500;
+  opacity: 0.7;
+}
+
+/* ExpenseAdd Styles */
+.expense-add {
+  margin-bottom: 2.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
+}
+
+.expense-add button,
+.add-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
+.expense-add button:hover,
 .add-button:hover {
-  background-color: #218838;
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
+.expense-add button:active,
 .add-button:active {
   transform: translateY(0);
 }
@@ -102,28 +171,60 @@
 /* Loading and Error States */
 .loading {
   text-align: center;
-  padding: 2rem;
-  color: #666;
-  font-size: 1.1rem;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #667eea;
+  font-weight: 500;
+}
+
+.loading::after {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #667eea;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .error-message {
-  background-color: #f8d7da;
-  color: #721c24;
-  padding: 1rem;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  border: 1px solid #f5c6cb;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  border: none;
+  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+  font-weight: 500;
+}
+
+.error-message::before {
+  content: '⚠️ ';
+  margin-right: 0.5rem;
 }
 
 .no-expenses {
   text-align: center;
-  padding: 2rem;
-  color: #666;
+  padding: 3rem;
+  color: #7f8c8d;
   font-style: italic;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  border: 2px dashed #dee2e6;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 15px;
+  border: 2px dashed rgba(52, 152, 219, 0.3);
+  font-size: 1.1rem;
+}
+
+.no-expenses::before {
+  content: '📋 ';
+  display: block;
+  font-size: 3rem;
+  margin-bottom: 1rem;
 }
 
 /* Original Vite styles (keeping for compatibility) */
@@ -161,4 +262,57 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #root {
+    padding: 1rem;
+  }
+  
+  .home-page {
+    padding: 1.5rem;
+    margin: 1rem auto;
+    border-radius: 15px;
+  }
+  
+  .home-page h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .expense-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.5rem;
+  }
+  
+  .expense-date {
+    min-width: auto;
+    margin-bottom: 1rem;
+  }
+  
+  .expense-details {
+    margin-left: 0;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+  
+  .expense-amount {
+    min-width: auto;
+    text-align: left;
+    align-self: flex-end;
+  }
+}
+
+/* Animation for new items */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
