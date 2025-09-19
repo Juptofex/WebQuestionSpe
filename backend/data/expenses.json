@@ -19,19 +19,5 @@
     "description": "Example expense #3 from Alice",
     "payer": "Alice",
     "amount": 2
-  },
-  {
-    "id": "1758266180411",
-    "date": "2025-09-19",
-    "description": "Random Expense",
-    "payer": "Bob",
-    "amount": 78.36
-  },
-  {
-    "id": "1758266553870",
-    "date": "2025-09-19",
-    "description": "Random Expense",
-    "payer": "Bob",
-    "amount": 42.74
   }
 ]

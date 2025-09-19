@@ -55,11 +55,55 @@ const Home: React.FC = () => {
     }
   };
 
+  const handleReset = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log('Calling reset endpoint...');
+      const response = await fetch(`${API_BASE_URL}/expenses/reset`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Reset response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Reset failed with error:', errorData);
+        throw new Error(errorData.error || `Reset failed with status ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Reset successful:', result);
+      setExpenses(result.data);
+      setError(null);
+      
+      // Show success message briefly
+      const successMessage = `Data successfully reset! ${result.count} expenses loaded.`;
+      setError(successMessage);
+      setTimeout(() => setError(null), 3000);
+    } catch (err) {
+      console.error('Error resetting expenses:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      setError(`Failed to reset expenses: ${errorMessage}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="home-page">
       <h1>Expense Tracker</h1>
-      {error && <div className="error-message">{error}</div>}
-      <ExpenseAdd handleAdd={handleAdd} />
+      {error && <div className={error.includes('successfully') ? 'success-message' : 'error-message'}>{error}</div>}
+      <div className="controls-section">
+        <ExpenseAdd handleAdd={handleAdd} />
+        <button onClick={handleReset} className="reset-button" disabled={loading}>
+          {loading ? 'Resetting...' : 'Reset Data'}
+        </button>
+      </div>
       {loading ? (
         <div className="loading">Loading expenses...</div>
       ) : (

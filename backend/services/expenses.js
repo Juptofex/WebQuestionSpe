@@ -3,6 +3,7 @@ const path = require('path');
 
 // Path to the expenses JSON file
 const expensesFilePath = path.join(__dirname, '../data/expenses.json');
+const expensesInitFilePath = path.join(__dirname, '../data/expenses.init.json');
 
 /**
  * Reads and parses all expenses from the JSON file
@@ -78,7 +79,43 @@ function addExpense(expense) {
   }
 }
 
+/**
+ * Resets the expenses data to initial state
+ * @returns {Array|null} Array of reset expense objects if successful, null if failed
+ */
+function resetExpenses() {
+  try {
+    console.log('Starting reset operation...');
+    console.log('Init file path:', expensesInitFilePath);
+    console.log('Expenses file path:', expensesFilePath);
+    
+    // Check if init file exists
+    if (!fs.existsSync(expensesInitFilePath)) {
+      throw new Error(`Initial expenses file not found: ${expensesInitFilePath}`);
+    }
+
+    // Read the initial expenses data
+    const initData = fs.readFileSync(expensesInitFilePath, 'utf8');
+    console.log('Initial data read successfully:', initData.substring(0, 100) + '...');
+    
+    const initialExpenses = JSON.parse(initData);
+    console.log('Initial expenses parsed:', initialExpenses.length, 'items');
+
+    // Overwrite the current expenses file with initial data
+    fs.writeFileSync(expensesFilePath, JSON.stringify(initialExpenses, null, 2));
+    console.log('Expenses file written successfully');
+    
+    console.log('Expenses data successfully reset to initial state');
+    return initialExpenses;
+  } catch (error) {
+    console.error('Error resetting expenses data:', error.message);
+    console.error('Error stack:', error.stack);
+    return null;
+  }
+}
+
 module.exports = {
   getAllExpenses,
-  addExpense
+  addExpense,
+  resetExpenses
 };
