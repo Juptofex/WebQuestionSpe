@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ExpenseItem from '../components/ExpenseItem';
+import ExpenseAdd from '../components/ExpenseAdd';
 import type { Expense } from '../types/Expense';
 
 const Home: React.FC = () => {
-  const expenses: Expense[] = [
+  const [expenses, setExpenses] = useState<Expense[]>([
     {
       id: '1',
       date: '2025-09-15',
@@ -22,7 +23,7 @@ const Home: React.FC = () => {
       id: '3',
       date: '2025-09-17',
       description: 'Restaurant Dinner',
-      payer: 'Charlie',
+      payer: 'Bob',
       amount: 120.00
     },
     {
@@ -32,11 +33,16 @@ const Home: React.FC = () => {
       payer: 'Alice',
       amount: 12.75
     }
-  ];
+  ]);
+
+  const handleAdd = (newExpense: Expense) => {
+    setExpenses(prevExpenses => [...prevExpenses, newExpense]);
+  };
 
   return (
     <div className="home-page">
       <h1>Expense Tracker</h1>
+      <ExpenseAdd handleAdd={handleAdd} />
       <div className="expense-list">
         {expenses.map((expense) => (
           <ExpenseItem key={expense.id} expense={expense} />
