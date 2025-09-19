@@ -129,44 +129,7 @@ body {
   opacity: 0.7;
 }
 
-/* ExpenseAdd Styles */
-.expense-add {
-  margin-bottom: 2.5rem;
-  padding: 2rem;
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-  border-radius: 15px;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
-}
-
-.expense-add button,
-.add-button {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.expense-add button:hover,
-.add-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-.expense-add button:active,
-.add-button:active {
-  transform: translateY(0);
-}
+/* ExpenseAdd Styles - removed, now in controls section */
 
 /* Loading and Error States */
 .loading {
@@ -223,9 +186,44 @@ body {
 /* Controls Section */
 .controls-section {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: center;
+  justify-content: center;
   margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.expense-add {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border-radius: 0;
+  text-align: center;
+  box-shadow: none;
+}
+
+.expense-add button,
+.add-button {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+  min-width: 140px;
+}
+
+.expense-add button:hover,
+.add-button:hover {
+  background: linear-gradient(135deg, #2980b9 0%, #1f639a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
 }
 
 .reset-button {
@@ -320,6 +318,8 @@ body {
     align-items: stretch;
   }
   
+  .expense-add button,
+  .add-button,
   .reset-button {
     width: 100%;
     min-width: auto;
