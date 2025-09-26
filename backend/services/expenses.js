@@ -5,7 +5,7 @@ const EXPENSES_FILE_PATH = path.join(__dirname, '../data/expenses.json');
 const EXPENSES_INIT_FILE_PATH = path.join(__dirname, '../data/expenses.init.json');
 
 function getAllExpenses() {
-  const data = fs.readFileSync(EXPENSES_FILE_PATH, 'utf8');
+  const data = prisma.expense.findMany();
   return JSON.parse(data);
 }
 
@@ -14,7 +14,7 @@ function addExpense(expense) {
   expenses.push(expense);
 
   const updatedExpenses = JSON.stringify(expenses, null, 2);
-  fs.writeFileSync(EXPENSES_FILE_PATH, updatedExpenses);
+  prisma.expense.create(EXPENSES_FILE_PATH, updatedExpenses);
   return expense;
 }
 
