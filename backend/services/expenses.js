@@ -1,12 +1,15 @@
 const fs = require('fs');
 const path = require('path');
+const { PrismaClient } = require('./generated/prisma');
 
+
+const prisma = new PrismaClient();
 const EXPENSES_FILE_PATH = path.join(__dirname, '../data/expenses.json');
 const EXPENSES_INIT_FILE_PATH = path.join(__dirname, '../data/expenses.init.json');
 
-function getAllExpenses() {
-  const data = prisma.expense.findMany();
-  return JSON.parse(data);
+async function getAllExpenses() {
+  const data = await prisma.expense.findMany();
+  return data;
 }
 
 function addExpense(expense) {
