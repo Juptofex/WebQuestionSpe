@@ -1,139 +1,99 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ExpenseItem from '../components/ExpenseItem';
 import ExpenseAdd from '../components/ExpenseAdd';
-import ExpenseSorter, { type SortOption } from '../components/ExpenseSorter';
-import { sortExpenses } from '../utils/sortUtils';
+import ExpenseSorter from '../components/ExpenseSorter';
 import type { Expense } from '../types/Expense';
 
-const API_BASE_URL = 'http://localhost:3000/api';
-
-const Home: React.FC = () => {
+export default function Home() {
+  const [sortingAlgo, setSortingAlgo] = useState<(a: Expense, b: Expense) => number>(() => () => 0);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [sortOption, setSortOption] = useState<SortOption>('date-newest');
+  const host = import.meta.env.VITE_API_URL || 'http://unknown-api-url.com';
 
-  // Fetch expenses from backend on component mount
+  const sendApiRequestandHandleError = async (method: string = 'GET', path: string, body?: any) => {
+    try {
+      const response = await fetch(`${host}/api/${path}`, {
+        method: method,
+        headers: body ? { 'Content-Type': 'application/json' } : {},
+        body: body ? JSON.stringify(body) : null,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('API request failed:', error);
+      setError(error instanceof Error ? error.message : 'An error occurred');
+    }
+  };
+
+  // Fetch expenses from backend
+  const fetchExpenses = async () => {
+    try {
+      setLoading(true);
+      const data = await sendApiRequestandHandleError('GET', 'expenses');
+      setExpenses(data);
+      setError(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchExpenses();
   }, []);
 
-  const fetchExpenses = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/expenses`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch expenses');
-      }
-      const data = await response.json();
-      setExpenses(data);
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching expenses:', err);
-      setError('Failed to load expenses');
-    } finally {
-      setLoading(false);
-    }
+  const handleAddExpense = async (newExpense: Expense) => {
+    const newExpensesOptimistic = [newExpense, ...expenses]; // Optimistically update the state, whatever the sort method, add on top
+    setExpenses(newExpensesOptimistic);
+    const addedExpense = await sendApiRequestandHandleError('POST', 'expenses', newExpense);
+    const newExpensesActual = [addedExpense, ...expenses]; // Now that we have the actual added expense with id from backend, let's use it instead of the optimistically added one
+    setExpenses(newExpensesActual);
   };
 
-  const handleAdd = async (newExpense: Expense) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/expenses`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newExpense),
-      });
+  const handleResetData = async () => {
+    setExpenses([]); // Clear current expenses optimistically
+    setLoading(true);
 
-      if (!response.ok) {
-        throw new Error('Failed to add expense');
-      }
-
-      const addedExpense = await response.json();
-      setExpenses(prevExpenses => [...prevExpenses, addedExpense]);
-    } catch (err) {
-      console.error('Error adding expense:', err);
-      setError('Failed to add expense');
-    }
+    const resetData = await sendApiRequestandHandleError('POST', 'expenses/reset');
+    setExpenses(resetData.data);
+    setLoading(false);
   };
 
-  const handleReset = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      console.log('Calling reset endpoint...');
-      const response = await fetch(`${API_BASE_URL}/expenses/reset`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      console.log('Reset response status:', response.status);
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error('Reset failed with error:', errorData);
-        throw new Error(errorData.error || `Reset failed with status ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('Reset successful:', result);
-      setExpenses(result.data);
-      setError(null);
-      
-      // Show success message briefly
-      const successMessage = `Data successfully reset! ${result.count} expenses loaded.`;
-      setError(successMessage);
-      setTimeout(() => setError(null), 3000);
-    } catch (err) {
-      console.error('Error resetting expenses:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
-      setError(`Failed to reset expenses: ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
+  const handleAlgoChange = (algo: (a: Expense, b: Expense) => number) => {
+    setSortingAlgo(() => algo); // Pay attention here, we're wrapping algo in a function because useState setter accept either a value or a function returning a value.
   };
 
-  // Sort expenses based on current sort option
-  const sortedExpenses = sortExpenses(expenses, sortOption);
+  const sortedExpenses = expenses.sort(sortingAlgo);
 
-  const handleSortChange = (newSortOption: SortOption) => {
-    setSortOption(newSortOption);
-  };
+  if (loading) {
+    return <div>Loading expenses...</div>;
+  }
 
   return (
-    <div className="home-page">
-      <h1>Expense Tracker</h1>
-      {error && <div className={error.includes('successfully') ? 'success-message' : 'error-message'}>{error}</div>}
-      {successMessage && <div className="success-message">{successMessage}</div>}
-      <div className="controls-section">
-        <ExpenseAdd handleAdd={handleAdd} />
-        <button onClick={handleReset} className="reset-button" disabled={loading}>
-          {loading ? 'Resetting...' : 'Reset Data'}
-        </button>
+    <div>
+      <h1>Expense Sharing App</h1>
+
+      {error && <div>Error: {error}</div>}
+
+      <div>
+        <ExpenseAdd addExpense={handleAddExpense} />
+        <button onClick={handleResetData}>Reset Data</button>
       </div>
-      {!loading && expenses.length > 0 && (
-        <ExpenseSorter currentSort={sortOption} onSortChange={handleSortChange} />
-      )}
-      {loading ? (
-        <div className="loading">Loading expenses...</div>
-      ) : (
-        <div className="expense-list">
-          {expenses.length === 0 ? (
-            <div className="no-expenses">No expenses found. Add your first expense!</div>
-          ) : (
-            sortedExpenses.map((expense) => (
-              <ExpenseItem key={expense.id} expense={expense} />
-            ))
-          )}
-        </div>
-      )}
+
+      <h2>Expenses ({expenses.length})</h2>
+
+      {expenses.length > 0 && <ExpenseSorter setSortingAlgo={handleAlgoChange} />}
+
+      <div>
+        {sortedExpenses.length === 0 ? (
+          <p>No expenses found.</p>
+        ) : (
+          sortedExpenses.map((expense) => <ExpenseItem key={expense.id} expense={expense} />)
+        )}
+      </div>
     </div>
   );
-};
-
-export default Home;
+}
