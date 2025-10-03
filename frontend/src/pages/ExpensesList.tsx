@@ -2,7 +2,7 @@ import ExpenseSorter from '../components/ExpenseSorter';
 import type { Expense } from '../types/Expense';
 import ExpenseItem from '../components/ExpenseItem';
 import { useEffect, useState } from 'react';
-import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '../components/ui/table';
 
 const host = import.meta.env.VITE_API_URL;
 
@@ -27,6 +27,7 @@ export default function ExpensesList() {
     } catch (error) {
       console.error('API request failed:', error);
       setError(error instanceof Error ? error.message : 'An error occurred');
+      return null;
     }
   };
 
@@ -34,9 +35,13 @@ export default function ExpensesList() {
   const fetchExpenses = async () => {
     try {
       setLoading(true);
-      const data = await sendApiRequestandHandleError('GET', 'expenses');
-      setExpenses(data);
       setError(null);
+      const data = await sendApiRequestandHandleError('GET', 'expenses');
+      if (data && Array.isArray(data)) {
+        setExpenses(data);
+      } else {
+        setExpenses([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -47,10 +52,11 @@ export default function ExpensesList() {
   }, []);
 
   const handleAlgoChange = (algo: (a: Expense, b: Expense) => number) => {
-    setSortingAlgo(() => algo); // Pay attention here, we're wrapping algo in a function because useState setter accept either a value or a function returning a value.
+    setSortingAlgo(() => algo);
   };
 
-  const sortedExpenses = expenses.sort(sortingAlgo);
+  // Create a copy before sorting to avoid mutating the original array
+  const sortedExpenses = [...expenses].sort(sortingAlgo);
 
   if (loading) {
     return (
@@ -66,7 +72,7 @@ export default function ExpensesList() {
       <h1 className="text-5xl text-center">Expense List</h1>
 
       <div className="w-5/6 mx-auto">
-        {error && <div>Error: {error}</div>}
+        {error && <div className="text-red-500">Error: {error}</div>}
 
         <h2>Expenses ({expenses.length})</h2>
 
