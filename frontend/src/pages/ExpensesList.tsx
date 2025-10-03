@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import ExpenseItem from '../components/ExpenseItem';
-import ExpenseAdd from '../components/ExpenseAdd';
 import ExpenseSorter from '../components/ExpenseSorter';
-import type { Expense, ExpenseInput } from '../types/Expense';
+import type { Expense } from '../types/Expense';
+import ExpenseItem from '../components/ExpenseItem';
+import { useEffect, useState } from 'react';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const host = import.meta.env.VITE_API_URL;
 
-export default function Home() {
+export default function ExpensesList() {
   const [sortingAlgo, setSortingAlgo] = useState<(_a: Expense, _b: Expense) => number>(() => () => 0);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,24 +46,6 @@ export default function Home() {
     fetchExpenses();
   }, []);
 
-  const handleAddExpense = async (newExpenseForm: ExpenseInput) => {
-    const newExpenseOptimistic = { id: 'optimistic', ...newExpenseForm } as Expense; // We add a temporary id -1 for React key, it will be replaced when we get the real added expense from backend
-    const newExpensesOptimistic = [newExpenseOptimistic, ...expenses]; // Optimistically update the state, whatever the sort method, add on top
-    setExpenses(newExpensesOptimistic);
-    const addedExpense = await sendApiRequestandHandleError('POST', 'expenses', newExpenseForm);
-    const newExpensesActual = [addedExpense, ...expenses]; // Now that we have the actual added expense with id from backend, let's use it instead of the optimistically added one
-    setExpenses(newExpensesActual);
-  };
-
-  const handleResetData = async () => {
-    setExpenses([]); // Clear current expenses optimistically
-    setLoading(true);
-
-    const resetData = await sendApiRequestandHandleError('POST', 'expenses/reset');
-    setExpenses(resetData.data);
-    setLoading(false);
-  };
-
   const handleAlgoChange = (algo: (a: Expense, b: Expense) => number) => {
     setSortingAlgo(() => algo); // Pay attention here, we're wrapping algo in a function because useState setter accept either a value or a function returning a value.
   };
@@ -71,35 +53,44 @@ export default function Home() {
   const sortedExpenses = expenses.sort(sortingAlgo);
 
   if (loading) {
-    return <div>Loading expenses...</div>;
+    return (
+      <div>
+        <h1 className="text-5xl text-center mb-8">Expense List</h1>
+        <div className="mx-auto w-30">Loading expenses...</div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h1>Expense Sharing App</h1>
+    <div className="w-full">
+      <h1 className="text-5xl text-center">Expense List</h1>
 
-      {error && <div>Error: {error}</div>}
+      <div className="w-5/6 mx-auto">
+        {error && <div>Error: {error}</div>}
 
-      <div>
-        <ExpenseAdd addExpense={handleAddExpense} />
-        <button onClick={handleResetData}>Reset Data</button>
-      </div>
+        <h2>Expenses ({expenses.length})</h2>
 
-      <h2>Expenses ({expenses.length})</h2>
+        {expenses.length > 0 && <ExpenseSorter setSortingAlgo={handleAlgoChange} />}
 
-      {expenses.length > 0 && <ExpenseSorter setSortingAlgo={handleAlgoChange} />}
-
-      <div>
         {sortedExpenses.length === 0 ? (
           <p>No expenses found.</p>
         ) : (
-          <table>
-            <tbody>
-              {sortedExpenses.map((expense) => (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-left">Id</TableHead>
+                <TableHead className="text-left">Date</TableHead>
+                <TableHead className="text-left">Description</TableHead>
+                <TableHead className="text-left">Payer</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedExpenses.map((expense: Expense) => (
                 <ExpenseItem key={expense.id} expense={expense} />
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         )}
       </div>
     </div>
