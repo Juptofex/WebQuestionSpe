@@ -4,6 +4,7 @@ import helmet from "helmet";
 import { pino } from "pino";
 import { healthCheckRouter } from "@/api/healthCheck/healthCheckRouter";
 import { userRouter } from "@/api/user/userRouter";
+import transferRouter from "@/api/transfer/transferRouter";
 import expenseRouter from "@/api/expense/expenseRouter";
 import errorHandler from "@/common/middleware/errorHandler";
 import rateLimiter from "@/common/middleware/rateLimiter";
@@ -30,6 +31,7 @@ app.use(requestLogger);
 app.use("/health-check", healthCheckRouter);
 app.use("/api/users", userRouter);
 app.use("/api/expenses", expenseRouter);
+app.use("/api/transfers", transferRouter);
 
 // Error handlers
 app.use(errorHandler());
