@@ -35,12 +35,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.16.3
- * Query Engine version: bb420e667c1820a8c05a38023385f6cc7ef8e83a
+ * Prisma Client JS version: 6.17.0
+ * Query Engine version: c0aafc03b8ef6cdced8654b9a817999e02457d6a
  */
 Prisma.prismaVersion = {
-  client: "6.16.3",
-  engine: "bb420e667c1820a8c05a38023385f6cc7ef8e83a"
+  client: "6.17.0",
+  engine: "c0aafc03b8ef6cdced8654b9a817999e02457d6a"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -148,7 +148,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "U:\\WebQuestionSpe\\backend\\generated\\prisma",
+      "value": "/Users/whyrox/Developer/3BIN-Q1-WEB3_CORR/backend/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -157,12 +157,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "darwin-arm64",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "U:\\WebQuestionSpe\\backend\\prisma\\schema.prisma",
+    "sourceFilePath": "/Users/whyrox/Developer/3BIN-Q1-WEB3_CORR/backend/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -170,12 +170,13 @@ const config = {
     "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",
-  "clientVersion": "6.16.3",
-  "engineVersion": "bb420e667c1820a8c05a38023385f6cc7ef8e83a",
+  "clientVersion": "6.17.0",
+  "engineVersion": "c0aafc03b8ef6cdced8654b9a817999e02457d6a",
   "datasourceNames": [
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -186,7 +187,7 @@ const config = {
   },
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id                   Int        @id @default(autoincrement())\n  name                 String\n  email                String     @unique\n  bankAccount          String? // optional\n  paidExpenses         Expense[]  @relation(\"PayerExpenses\")\n  transfersOut         Transfer[] @relation(\"UserTransfersSource\")\n  transfersIn          Transfer[] @relation(\"UserTransfersTarget\")\n  participatedExpenses Expense[]  @relation(\"ParticipantExpenses\")\n}\n\nmodel Expense {\n  id           Int      @id @default(autoincrement())\n  description  String\n  amount       Float\n  date         DateTime @default(now())\n  payer        User     @relation(\"PayerExpenses\", fields: [payerId], references: [id])\n  payerId      Int\n  participants User[]   @relation(\"ParticipantExpenses\")\n}\n\nmodel Transfer {\n  id       Int      @id @default(autoincrement())\n  amount   Float\n  date     DateTime @default(now())\n  source   User     @relation(\"UserTransfersSource\", fields: [sourceId], references: [id])\n  sourceId Int\n  target   User     @relation(\"UserTransfersTarget\", fields: [targetId], references: [id])\n  targetId Int\n}\n",
   "inlineSchemaHash": "8d4d05e4de7bbf27ff046173ac44680334c3579825eff679c7dd14791b5ce0c6",
-  "copyEngine": false
+  "copyEngine": true
 }
 
 const fs = require('fs')
@@ -223,3 +224,9 @@ const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
+path.join(process.cwd(), "generated/prisma/libquery_engine-darwin-arm64.dylib.node")
+// file annotations for bundling tools to include these files
+path.join(__dirname, "schema.prisma");
+path.join(process.cwd(), "generated/prisma/schema.prisma")

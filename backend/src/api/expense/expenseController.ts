@@ -1,6 +1,6 @@
-import type { Request, Response } from 'express';
-import * as expenseRepository from './expenseRepository';
-import { StatusCodes } from 'http-status-codes/build/cjs/status-codes';
+import type { Request, Response } from "express";
+import * as expenseRepository from "./expenseRepository";
+import { StatusCodes } from "http-status-codes/build/cjs/status-codes";
 
 export async function listExpenses(req: Request, res: Response) {
   const expenses = await expenseRepository.getAllExpenses();
@@ -11,7 +11,9 @@ export async function getExpenseDetail(req: Request, res: Response) {
   const id = Number(req.params.id);
   const expense = await expenseRepository.getExpenseById(id);
   if (!expense) {
-    return res.status(StatusCodes.NOT_FOUND).json({ error: 'Expense not found' });
+    return res
+      .status(StatusCodes.NOT_FOUND)
+      .json({ error: "Expense not found" });
   }
   res.status(StatusCodes.OK).json(expense);
 }

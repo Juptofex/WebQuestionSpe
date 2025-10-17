@@ -1,5 +1,5 @@
-import { Prisma } from '@/generated/prisma';
-import { z } from 'zod';
+import { Prisma } from "@/generated/prisma";
+import { z } from "zod";
 
 type ExpenseWithPayerAndParticipants = Prisma.ExpenseGetPayload<{
   include: {
@@ -21,32 +21,36 @@ export const TransactionSchema = z.object({
   description: z.string(),
   amount: z.number(),
   date: z.date(),
-  kind: z.enum(['expense', 'transfer']),
+  kind: z.enum(["expense", "transfer"]),
   payer: z.any(),
   participants: z.array(z.any()),
 });
 
 export const TransactionArraySchema = z.array(TransactionSchema);
 
-export const fromExpense = (expense: ExpenseWithPayerAndParticipants): Transaction => {
+export const fromExpense = (
+  expense: ExpenseWithPayerAndParticipants
+): Transaction => {
   return TransactionSchema.parse({
     id: `expense-${expense.id}`,
     description: expense.description,
     amount: expense.amount,
     date: expense.date,
-    kind: 'expense',
+    kind: "expense",
     payer: expense.payer,
     participants: expense.participants,
   });
 };
 
-export const fromTransfer = (transfer: TransferWithSourceAndTarget): Transaction => {
+export const fromTransfer = (
+  transfer: TransferWithSourceAndTarget
+): Transaction => {
   return TransactionSchema.parse({
     id: `transfer-${transfer.id}`,
-    description: 'Transfer',
+    description: "Transfer",
     amount: transfer.amount,
     date: transfer.date,
-    kind: 'transfer',
+    kind: "transfer",
     payer: transfer.source,
     participants: [transfer.target],
   });
