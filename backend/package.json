@@ -8,8 +8,7 @@
     "start:prod": "node dist/index.js",
     "check": "biome check --write",
     "test": "vitest run",
-    "test:cov": "vitest run --coverage",
-    "prisma:start_db": "npx prisma dev @0.0.0-dev.202509301625"
+    "test:cov": "vitest run --coverage"
   },
   "dependencies": {
     "@apollo/server": "^5.0.0",
@@ -17,9 +16,11 @@
     "@asteasolutions/zod-to-openapi": "7.3.4",
     "@pothos/core": "^4.10.0",
     "@pothos/plugin-prisma": "^4.12.0",
+    "@pothos/plugin-validation": "^4.2.0",
+    "@prisma/cli-dev": "^0.8.3",
     "@prisma/client": "6.16.3",
     "cors": "2.8.5",
-    "dotenv": "17.2.1",
+    "dotenv": "^17.2.1",
     "express": "5.1.0",
     "express-rate-limit": "8.0.1",
     "graphql": "^16.11.0",
@@ -55,7 +56,6 @@
     "format": [
       "esm"
     ],
-    "target": "es2020",
     "sourcemap": true,
     "clean": true,
     "dts": true,
