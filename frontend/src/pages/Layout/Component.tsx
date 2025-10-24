@@ -5,7 +5,7 @@ import type { User } from '@/types/User';
 import { Toaster } from 'sonner';
 
 export default function Layout() {
-  const { users } = useLoaderData<LoaderData>();
+  const { users = [] } = useLoaderData<LoaderData>() ?? {};
   const [currentUser, setCurrentUser] = useState<null | User>(null);
 
   const handleUserChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

@@ -11,6 +11,7 @@ import { env } from '@/common/utils/envConfig';
 import expenseRouter from './api/expense/expenseRouter';
 import transferRouter from './api/transfer/transferRouter';
 import transactionRouter from './api/transaction/transactionRouter';
+import authRouter from './api/auth/authRouter';
 import graphqlMiddleware from './graphql/server';
 import { ruruHTML } from 'ruru/server';
 
@@ -48,6 +49,7 @@ app.use('/api/users', userRouter);
 app.use('/api/expenses', expenseRouter);
 app.use('/api/transfers', transferRouter);
 app.use('/api/transactions', transactionRouter);
+app.use('/auth', authRouter);
 
 app.use('/graphql', graphqlMiddleware);
 

@@ -47,7 +47,7 @@ type ExpenseFormData = z.infer<typeof expenseSchema>;
 
 export default function ExpenseForm() {
   const currentUser = useCurrentUser();
-  const { users } = useLoaderData<LoaderData>();
+  const { users = [] } = useLoaderData<LoaderData>() ?? {};
   const navigate = useNavigate();
 
   const form = useForm<ExpenseFormData>({

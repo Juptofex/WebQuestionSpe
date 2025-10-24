@@ -4,7 +4,7 @@ import TransferTransactionItem from '@/components/TransferTransactionItem';
 import type { LoaderData } from './loader';
 
 export default function Transactions() {
-  const { transactions } = useLoaderData<LoaderData>();
+  const { transactions = [] } = useLoaderData<LoaderData>() ?? {};
 
   return (
     <section className="container mx-auto px-4 py-6">

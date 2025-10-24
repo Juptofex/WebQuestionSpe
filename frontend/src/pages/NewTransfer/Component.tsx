@@ -22,7 +22,7 @@ type TransferFormData = z.infer<typeof transferSchema>;
 
 export default function TransferForm() {
   const currentUser = useCurrentUser();
-  const { users } = useLoaderData<LoaderData>();
+  const { users = [] } = useLoaderData<LoaderData>() ?? {};
   const navigate = useNavigate();
 
   const form = useForm<TransferFormData>({
